@@ -25,4 +25,9 @@
     <ProjectReference Include="..\CYBERQUIZ.DAL\CYBERQUIZ.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOS\" />
+    <Folder Include="SERVICES\" />
+  </ItemGroup>
+
 </Project>
