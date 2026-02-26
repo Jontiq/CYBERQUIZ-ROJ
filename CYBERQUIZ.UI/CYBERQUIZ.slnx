@@ -1,7 +1,5 @@
 <Solution>
-  <Project Path="../CYBERQUIZ.API/CYBERQUIZ.API.csproj" Id="c34982aa-fcf2-440e-877e-00a9d773c33c">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
+  <Project Path="../CYBERQUIZ.API/CYBERQUIZ.API.csproj" Id="c34982aa-fcf2-440e-877e-00a9d773c33c" />
   <Project Path="../CYBERQUIZ.BLL/CYBERQUIZ.BLL.csproj" />
   <Project Path="../CYBERQUIZ.DAL/CYBERQUIZ.DAL.csproj" />
   <Project Path="CYBERQUIZ.UI.csproj" />

@@ -12,10 +12,10 @@ namespace CYBERQUIZ.DAL.DATA
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        //public DbSet<Category> Categories => Set<Category>();
-        //public DbSet<SubCategory> SubCategories => Set<SubCategory>();
-        //public DbSet<Question> Questions => Set<Question>();
-        //public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>();
-        //public DbSet<UserResult> UserResults => Set<UserResult>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<SubCategory> SubCategories => Set<SubCategory>();
+        public DbSet<Question> Questions => Set<Question>();
+        public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>();
+        public DbSet<UserResult> UserResults => Set<UserResult>();
     }
 }
