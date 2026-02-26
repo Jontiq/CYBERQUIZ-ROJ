@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CYBERQUIZ.BLL\CYBERQUIZ.BLL.csproj" />
     <ProjectReference Include="..\CYBERQUIZ.DAL\CYBERQUIZ.DAL.csproj" />
   </ItemGroup>
 

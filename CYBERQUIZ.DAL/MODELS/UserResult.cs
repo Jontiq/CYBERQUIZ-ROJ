@@ -13,5 +13,6 @@ namespace CYBERQUIZ.DAL.MODELS
         public int SelectedAnswerOptionId { get; set; }
         public bool IsCorrect { get; set; }
         public DateTime AnsweredAt { get; set; } = DateTime.UtcNow;
+        public Guid SessionId { get; set; } //Ska skapa ett id för varje quizz, möjligör för användaren att endast se sitt absolut bästa resultat
     }
 }
