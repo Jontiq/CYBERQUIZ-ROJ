@@ -1,23 +1,19 @@
+using CYBERQUIZ.DAL.DATA;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CYBERQUIZ.DAL.DATA;
 var builder = WebApplication.CreateBuilder(args);
-//Connection string
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");;
-//Lägger till AppDbContext
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
-    // Här ställer vi in kraven för konton
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
-
-    // Viktigt för Username-inloggning:
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = true;
 })
-.AddEntityFrameworkStores<AppDbContext>(); //kopplar identity till db
+.AddEntityFrameworkStores<AppDbContext>();
+
 
 builder.Services.AddScoped(sp => new HttpClient
 {
