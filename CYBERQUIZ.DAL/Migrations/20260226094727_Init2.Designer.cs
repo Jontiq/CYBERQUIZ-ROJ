@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CYBERQUIZ.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260226085457_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260226094727_Init2")]
+    partial class Init2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
