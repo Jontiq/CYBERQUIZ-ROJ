@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CYBERQUIZ.DAL.DATA;
 var builder = WebApplication.CreateBuilder(args);
 //Connection string
-var connectionString = builder.Configuration.GetConnectionString("AppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");;
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'AppDbContextConnection' not found.");;
 //Lägger till AppDbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
