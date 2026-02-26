@@ -20,6 +20,18 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 var app = builder.Build();
 
+
+//skapar användare "user" med lösenord "Password1234!"
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    if (await userManager.FindByNameAsync("user") == null)
+    {
+        var defaultUser = new IdentityUser { UserName = "user", Email = "user@cyberquiz.se" };
+        await userManager.CreateAsync(defaultUser, "Password1234!");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -29,6 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 
