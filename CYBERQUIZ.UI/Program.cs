@@ -19,6 +19,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 })
 .AddEntityFrameworkStores<AppDbContext>(); //kopplar identity till db
 
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7138")
+});
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 
