@@ -8,7 +8,7 @@ namespace CYBERQUIZ.DAL.MODELS
     {
         public int Id { get; set; }
         public string Text { get; set; } = string.Empty;
-        public bool IsCorrect { get; set; }
+        public bool IsCorrect { get; set; } //Bestämmer om answer option är korrekt eller inte :)
         public int QuestionId { get; set; }
         public Question Question { get; set; } = null!;
     }

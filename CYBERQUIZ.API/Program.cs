@@ -1,3 +1,4 @@
+using CYBERQUIZ.BLL.SERVICES;
 using CYBERQUIZ.DAL.DATA;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+// Tror inte vi behöver lägga till dessa i UI i och med att UI > API > Services > DAL? Vi får se :)
 
 
 builder.Services.AddControllers();
