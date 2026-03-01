@@ -5,12 +5,38 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Registrerar AppDbContext med connection string från appsettings.json
+// EnableRetryOnFailure gör att EF Core försöker igen om LocalDB inte
+// hunnit starta upp än
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null
+        )
+    ));
+
+
+
 // Add services to the container.
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-// Tror inte vi behöver lägga till dessa i UI i och med att UI > API > Services > DAL? Vi får se :)
+// Tror inte vi behöver lägga till dessa i UI i och med att UI > API > Services > DAL? Vi får se :) 
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowUI", policy =>
+    {
+        policy.WithOrigins(builder.Configuration["AllowedOrigins"] ?? "https://localhost:7001")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Krävs för Identity-cookies
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -19,6 +45,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// AddIdentity registrerar UserManager, SignInManager och RoleManager
+// AddEntityFrameworkStores kopplar Identity till vår AppDbContext
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
@@ -50,8 +78,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseCors("AllowUI");
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
