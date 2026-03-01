@@ -29,4 +29,4 @@ namespace CYBERQUIZ.DAL.DATA
         }
     }
 }
-}
+
