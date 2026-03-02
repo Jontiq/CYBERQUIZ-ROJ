@@ -60,10 +60,9 @@ namespace CYBERQUIZ.DAL.DATA
             builder.Entity<UserResult>()
                 .HasIndex(r => r.UserId);
 
-            // ──────────────────────────────────────────────
             // SEED-DATA
             // Körs vid Add-Migration och skapar initialt innehåll i databasen
-            // ──────────────────────────────────────────────
+            
 
             // Kategorier
             builder.Entity<Category>().HasData(
