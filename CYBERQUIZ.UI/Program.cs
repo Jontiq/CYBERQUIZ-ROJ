@@ -17,8 +17,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7138")
+    BaseAddress = new Uri("https://localhost:7270")
 });
+
+builder.Services.AddHttpClient("API", client => 
+{
+client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!); 
+});
+
 
 // Add services to the container.
 builder.Services.AddRazorPages();
