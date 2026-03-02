@@ -1,4 +1,30 @@
 ﻿@page
 @model CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet.BrandVäggarModel
+
 @{
+    ViewData["Title"] = "Quiz"; 
 }
+
+@foreach(var category in Model.Categories)
+{
+   <div>
+        <h3>@category.Name</h3>
+        @foreach(var sub in category.SubCategories)
+        {
+            <div>
+                @if(sub.IsUnlocked)
+                {
+                    <a asp-page="/QuizPages/Quiz" asp-route-subCategoryId="@sub.Id">@sub.Name (@sub.QuestionCount frågor)</a>
+                }
+                else
+                {
+                    <span>@sub.Name (@sub.QuestionCount frågor)</span>
+                }
+            </div>
+        }
+
+   </div>
+}
+
+
+

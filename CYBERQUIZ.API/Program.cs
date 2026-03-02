@@ -29,7 +29,7 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowUI", policy =>
+    options.AddPolicy("AllowALL", policy =>
     {
         policy.WithOrigins(builder.Configuration["AllowedOrigins"] ?? "https://localhost:7001")
               .AllowAnyHeader()
@@ -81,7 +81,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowUI");
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

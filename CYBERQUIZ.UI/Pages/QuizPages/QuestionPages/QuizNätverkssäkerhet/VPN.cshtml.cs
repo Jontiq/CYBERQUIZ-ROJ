@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
 {
-    public class IntrångsdetekteringModel : PageModel
+    public class VPNModel : PageModel
     {
         public void OnGet()
         {

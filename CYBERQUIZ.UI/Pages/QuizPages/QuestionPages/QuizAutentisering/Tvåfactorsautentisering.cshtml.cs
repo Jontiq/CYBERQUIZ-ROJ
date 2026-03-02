@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizInformationssäkerhet
+namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizAutentisering
 {
-    public class IntegritetModel : PageModel
+    public class TvåfactorsautentiseringModel : PageModel
     {
         public void OnGet()
         {
