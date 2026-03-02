@@ -1,4 +1,5 @@
 using CYBERQUIZ.DAL.DATA;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
@@ -15,16 +16,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 .AddEntityFrameworkStores<AppDbContext>();
 
 
-builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri("https://localhost:7270")
-});
-
 builder.Services.AddHttpClient("API", client => 
 {
 client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!); 
 });
 
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\keys"))
+    .SetApplicationName("CyberQuiz");
 
 // Add services to the container.
 builder.Services.AddRazorPages();
