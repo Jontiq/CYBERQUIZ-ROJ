@@ -29,7 +29,7 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
         { 
             var client = _httpClientFactory.CreateClient("API");
 
-            var catagories = await client.GetFromJsonAsync<List<CategoryDto>>("api/categories");
+            var catagories = await client.GetFromJsonAsync<List<CategoryDto>>("Api/Categories");
 
             if (catagories != null)
             {

@@ -4,24 +4,27 @@
 }
 
 <h2>QuizHome</h2>
+@{
+    ViewData["Title"] = "Quiz";
+}
 
-<h3>Nätverkssäkerhet</h3>
-<div >
-    <a asp-page="/QuizPages/QuestionPages/QuizNätverkssäkerhet/Brandväggar">Brandväggar</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizNätverkssäkerhet/VPN">VPN</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizNätverkssäkerhet/DDoS">Skydd mot DDoS-attacker</a>
-</div>
+@foreach (var category in Model.Categories)
+{
+    <div>
+        <h3>@category.Name</h3>
+        @foreach (var sub in category.SubCategories)
+        {
+            <div>
+                @if (sub.IsUnlocked)
+                {
+                    <a asp-page="/QuizPages/Quiz" asp-route-subCategoryId="@sub.Id">@sub.Name (@sub.QuestionCount frågor)</a>
+                }
+                else
+                {
+                    <span>@sub.Name (@sub.QuestionCount frågor)</span>
+                }
+            </div>
+        }
 
-<h3>Autentisering</h3>
-<div>
-    <a asp-page="/QuizPages/QuestionPages/QuizAutentisering/Lösenord">Lösenord</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizAutentisering/Tvåfactorsautentisering">Tvåfactorsautentisering</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizAutentisering/OAuth_och_SSO">OAuth och SSO</a>
-</div>
-
-<h3>Kryptering</h3>
-<div>
-    <a asp-page="/QuizPages/QuestionPages/QuizKryptering/Symmetrisk_Kryptering">Symmetrisk Kryptering</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizKryptering/Asymmetrisk_Kryptering">Asymmetrisk Kryptering</a>
-    <a asp-page="/QuizPages/QuestionPages/QuizKryptering/Hashing">Hashing</a>
-</div>
+    </div>
+}
