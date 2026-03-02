@@ -42,8 +42,6 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // AddIdentity registrerar UserManager, SignInManager och RoleManager
 // AddEntityFrameworkStores kopplar Identity till vår AppDbContext
@@ -56,7 +54,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
 })
 .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 //skapar användare "user" med lösenord "Password1234!"
