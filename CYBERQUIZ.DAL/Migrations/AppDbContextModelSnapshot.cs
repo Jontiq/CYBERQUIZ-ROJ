@@ -3211,13 +3211,13 @@ namespace CYBERQUIZ.DAL.Migrations
                         {
                             Id = 4,
                             CategoryId = 2,
-                            Name = "Symmetrisk kryptering"
+                            Name = "Symmetrisk_Kryptering"
                         },
                         new
                         {
                             Id = 5,
                             CategoryId = 2,
-                            Name = "Asymmetrisk kryptering"
+                            Name = "Asymmetrisk_Kryptering"
                         },
                         new
                         {
@@ -3241,7 +3241,7 @@ namespace CYBERQUIZ.DAL.Migrations
                         {
                             Id = 9,
                             CategoryId = 3,
-                            Name = "OAuth och SSO"
+                            Name = "OAuth_och_SSO"
                         });
                 });
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
 
-namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
+namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
 {
     public class BrandVäggarModel : PageModel
     {
@@ -27,15 +27,7 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
         public bool Answer { get; set; }
         public async Task OnGetAsync()
         { 
-            var client = _httpClientFactory.CreateClient("API");
-
-            var catagories = await client.GetFromJsonAsync<List<CategoryDto>>("Api/Categories");
-
-            if (catagories != null)
-            {
-                Categories = catagories;
-            }
-
+            
         }
 
        

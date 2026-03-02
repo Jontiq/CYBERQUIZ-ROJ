@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizKryptering
+namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
 {
-    public class Asymmetrisk_KrypteringModel : PageModel
+    public class HashingModel : PageModel
     {
         public void OnGet()
         {

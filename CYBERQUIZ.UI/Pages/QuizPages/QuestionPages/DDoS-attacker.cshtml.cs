@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
+namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
 {
-    public class DDoSModel : PageModel
+    public class DDoS_attackerModel : PageModel
     {
         public void OnGet()
         {

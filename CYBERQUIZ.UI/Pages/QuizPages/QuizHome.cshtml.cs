@@ -18,10 +18,11 @@ namespace CYBERQUIZ.UI.Pages.QuizPages
 
         [BindProperty, Required]
         public bool Answer { get; set; }
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int subCategoryId)
         {
             var client = _httpClientFactory.CreateClient("API");
 
+            //
             if (Request.Headers.TryGetValue("Cookie", out var cookie))
             {
                 client.DefaultRequestHeaders.Remove("Cookie");

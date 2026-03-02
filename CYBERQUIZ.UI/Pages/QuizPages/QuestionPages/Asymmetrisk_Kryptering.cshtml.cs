@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizNätverkssäkerhet
+namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
 {
-    public class VPNModel : PageModel
+    public class Asymmetrisk_KrypteringModel : PageModel
     {
         public void OnGet()
         {
