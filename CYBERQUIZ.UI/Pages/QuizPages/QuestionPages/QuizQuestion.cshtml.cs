@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
 {
-    public class TvåfactorsautentiseringModel : PageModel
+    public class QuizQuestionModel : PageModel
     {
         public void OnGet()
         {
