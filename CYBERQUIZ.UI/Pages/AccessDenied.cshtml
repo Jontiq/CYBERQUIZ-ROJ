@@ -1,0 +1,12 @@
+﻿@page
+@model CYBERQUIZ.UI.Pages.AccessDeniedModel
+@{
+    ViewData["Title"] = "Åtkomst nekad";
+}
+
+<div class="text-center mt-5">
+    <h2>🔒 Åtkomst nekad</h2>
+    <p class="text-muted">Du har inte tillgång till detta quiz ännu.</p>
+    <p>Du måste klara föregående subkategori med minst 80% rätt för att låsa upp denna.</p>
+    <a asp-page="/QuizPages/QuizHome" class="btn btn-primary mt-3">Tillbaka till Quiz</a>
+</div>
