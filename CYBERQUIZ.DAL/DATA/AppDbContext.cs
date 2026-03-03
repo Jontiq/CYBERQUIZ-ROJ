@@ -23,9 +23,9 @@ namespace CYBERQUIZ.DAL.DATA
             // Anropa base så att Identity-tabellerna konfigureras korrekt
             base.OnModelCreating(builder);
 
-            // ──────────────────────────────────────────────
+            
             // RELATIONER
-            // ──────────────────────────────────────────────
+            
 
             // Category → SubCategory: om en kategori tas bort raderas alla dess subkategorier
             builder.Entity<Category>()
