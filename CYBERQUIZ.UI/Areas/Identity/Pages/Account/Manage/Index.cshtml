@@ -7,24 +7,76 @@
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+    <div class="col-md-8">
+
+        @* Visa inloggat användarnamn *@
+        <div class="mb-4">
+            <h5>Inloggad som: <strong>@Model.Username</strong></h5>
+        </div>
+
+        @* Visa progressionsdata om den finns *@
+        @if (Model.Progress != null)
+        {
+            @* Total progressionsbar för hela quizet *@
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Total progression</h5>
+                    <p>@Model.Progress.AnsweredCorrectly av @Model.Progress.TotalQuestions frågor rätt</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success"
+                             role="progressbar"
+                             style="width: @Model.Progress.OverallPercent.ToString("F0")%"
+                             aria-valuenow="@Model.Progress.OverallPercent.ToString("F0")"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            @Model.Progress.OverallPercent.ToString("F0")%
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+
+            @* En card per subkategori med individuell progressionsbar *@
+            <h5>Progression per subkategori</h5>
+            @foreach (var sub in Model.Progress.SubCategoryProgress)
+            {
+                <div class="card mb-2">
+                    <div class="card-body">
+                        @* Rubrik med subkategorinamn och godkänd/ej godkänd-badge *@
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong>@sub.SubCategoryName</strong>
+                            @if (sub.Passed)
+                            {
+                                <span class="badge bg-success">Godkänd ✓</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Ej godkänd</span>
+                            }
+                        </div>
+                        @* Antal rätt av totalt *@
+                        <p class="mb-1 text-muted">@sub.Correct av @sub.Total rätt</p>
+                        @* Progressionsbar, grön om godkänd annars gul *@
+                        <div class="progress">
+                            <div class="progress-bar @(sub.Passed ? "bg-success" : "bg-warning")"
+                                 role="progressbar"
+                                 style="width: @sub.Percent.ToString("F0")%"
+                                 aria-valuenow="@sub.Percent.ToString("F0")"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                @sub.Percent.ToString("F0")%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            @* Visas om ingen progressionsdata finns tillgänglig *@
+            <p class="text-muted">Ingen progressionsdata hittades.</p>
+        }
+
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

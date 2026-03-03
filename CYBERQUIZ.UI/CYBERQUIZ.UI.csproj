@@ -27,8 +27,4 @@
     <ProjectReference Include="..\CYBERQUIZ.BLL\CYBERQUIZ.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Identity\Data\" />
-  </ItemGroup>
-
 </Project>
