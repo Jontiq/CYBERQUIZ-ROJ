@@ -17,7 +17,7 @@
             <div>
                 @if (sub.IsUnlocked)
                 {
-                    <a asp-page="/QuizPages/Quiz" asp-route-subCategoryId="@sub.Id">@sub.Name (@sub.QuestionCount frågor)</a>
+                    <a asp-page="/QuizPages/QuestionPages/@sub.Name" asp-route-SubCategoryId="@sub.Id">@sub.Name (@sub.QuestionCount frågor)</a>
                 }
                 else
                 {
