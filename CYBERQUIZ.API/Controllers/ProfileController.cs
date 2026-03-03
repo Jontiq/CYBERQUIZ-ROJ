@@ -32,16 +32,16 @@ namespace CYBERQUIZ.API.Controllers
 
         // PUT /api/profile/email
         // Uppdaterar användarens e-postadress
-        [HttpPut("email")]
-        public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailModel model)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var result = await _profileService.ChangeEmailAsync(userId, model.NewEmail);
+        //[HttpPut("email")]
+        //public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailModel model)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        //    var result = await _profileService.ChangeEmailAsync(userId, model.NewEmail);
 
-            if (!result)
-                return BadRequest("Kunde inte uppdatera e-post.");
+        //    if (!result)
+        //        return BadRequest("Kunde inte uppdatera e-post.");
 
-            return Ok("E-post uppdaterad.");
-        }
+        //    return Ok("E-post uppdaterad.");
+        //}
     }
 }
