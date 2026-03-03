@@ -1,25 +1,79 @@
 ﻿@page "{subCategoryId:int}"
 @model CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizQuestionModel
 @{
-    ViewData["Title"] = "Quiz Question";
+    ViewData["Title"] = "Quiz";
 }
 
-@foreach(var question in Model.Questions)
-{
+<h2>Quiz</h2>
 
-    <div>
-        <h3>@question.Text</h3>
-<form method="post">
-        @foreach(var option in question.AnswerOptions)
-    {
-        <div>
-                  <input type="radio" name="SelectedAnswer_@question.Id"
-                       value="@option.Id"
-                       id="option_@option.Id" />
-                    <label for="option_@option.Id">@option.Text</label>
-                
-        </div>
-    }
-    </form>
+@foreach (var question in Model.Questions)
+{
+    <div id="question-@question.Id" style="margin-bottom: 20px;">
+        <p><strong>@question.Text</strong></p>
+        @foreach (var answer in question.AnswerOptions)
+        {
+            <div>
+                <input type="radio"
+                       name="question-@question.Id"
+                       id="answer-@answer.Id"
+                       value="@answer.Id"
+                       onchange="selectAnswer(@question.Id, @answer.Id)" />
+                <label for="answer-@answer.Id">@answer.Text</label>
+            </div>
+        }
+        <p id="feedback-@question.Id"></p>
     </div>
 }
+
+<button id="submit-btn" onclick="submitAll()" disabled>Klar</button>
+<div id="result-block" style="display:none;">
+    <p id="result-text"></p>
+    <button onclick="location.reload()">Försök igen</button>
+    <a asp-page="/QuizPages/QuizHome">Tillbaka till Quiz</a>
+</div>
+
+<script>
+    const sessionId = crypto.randomUUID();
+    const selectedAnswers = {};
+    const totalQuestions = @Model.Questions.Count;
+
+    function selectAnswer(questionId, answerId) {
+        // Spara valt svar
+        selectedAnswers[questionId] = answerId;
+
+        // Aktivera "Klar"-knappen när alla frågor är besvarade
+        if (Object.keys(selectedAnswers).length === totalQuestions)
+            document.getElementById('submit-btn').disabled = false;
+    }
+
+    async function submitAll() {
+        document.getElementById('submit-btn').disabled = true;
+        let correctCount = 0;
+
+        for (const [questionId, answerId] of Object.entries(selectedAnswers)) {
+            const response = await fetch('@Model.ApiBaseUrl/api/quiz/answer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    sessionId,
+                    questionId: parseInt(questionId),
+                    selectedAnswerOptionId: answerId
+                })
+            });
+
+            const result = await response.json();
+            if (result.isCorrect) correctCount++;
+
+            // Visa feedback och inaktivera radio-buttons
+            document.getElementById(`feedback-${questionId}`).textContent = result.isCorrect ? '✓ Rätt!' : '✗ Fel!';
+            document.querySelectorAll(`input[name="question-${questionId}"]`).forEach(r => r.disabled = true);
+        }
+
+        const percent = Math.round((correctCount / totalQuestions) * 100);
+        document.getElementById('result-text').textContent =
+            `Du fick ${correctCount} av ${totalQuestions} rätt (${percent}%) - ${percent >= 80 ? 'Godkänd!' : 'Ej godkänd'}`;
+        document.getElementById('result-block').style.display = 'block';
+        document.getElementById('submit-btn').style.display = 'none';
+    }
+</script>
