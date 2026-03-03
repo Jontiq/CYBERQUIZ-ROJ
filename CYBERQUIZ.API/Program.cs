@@ -24,8 +24,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-//builder.Services.AddScoped<IProfileService, ProfileService>();
-// Tror inte vi behöver lägga till dessa i UI i och med att UI > API > Services > DAL? Vi får se :) 
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 
 // CORS
 builder.Services.AddCors(options =>
@@ -47,17 +47,16 @@ builder.Services.AddOpenApi();
 // AddIdentity registrerar UserManager, SignInManager och RoleManager
 // AddEntityFrameworkStores kopplar Identity till vår AppDbContext
 
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
-//    options.SignIn.RequireConfirmedAccount = false;
-//    options.Password.RequireDigit = true;
-//    options.Password.RequiredLength = 6;
-//    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-//    options.User.RequireUniqueEmail = true;
-//})
-//.AddEntityFrameworkStores<AppDbContext>();
-builder.Services
-    .AddAuthentication(IdentityConstants.ApplicationScheme)
-    .AddCookie(IdentityConstants.ApplicationScheme);
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<AppDbContext>();
+
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\keys"))
     .SetApplicationName("CyberQuiz");
@@ -71,15 +70,15 @@ app.UseSwaggerUI();
 
 
 //skapar användare "user" med lösenord "Password1234!"
-//using (var scope = app.Services.CreateScope())
-//{
-//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-//    if (await userManager.FindByNameAsync("user") == null)
-//    {
-//        var defaultUser = new IdentityUser { UserName = "user", Email = "user@cyberquiz.se" };
-//        await userManager.CreateAsync(defaultUser, "Password1234!");
-//    }
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    if (await userManager.FindByNameAsync("user") == null)
+    {
+        var defaultUser = new IdentityUser { UserName = "user", Email = "user@cyberquiz.se" };
+        await userManager.CreateAsync(defaultUser, "Password1234!");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
