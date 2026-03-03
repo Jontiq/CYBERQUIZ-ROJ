@@ -6,7 +6,20 @@
 
 @foreach(var question in Model.Questions)
 {
+
     <div>
         <h3>@question.Text</h3>
+<form method="post">
+        @foreach(var option in question.AnswerOptions)
+    {
+        <div>
+                  <input type="radio" name="SelectedAnswer_@question.Id"
+                       value="@option.Id"
+                       id="option_@option.Id" />
+                    <label for="option_@option.Id">@option.Text</label>
+                
+        </div>
+    }
+    </form>
     </div>
 }
