@@ -1,4 +1,12 @@
-﻿@page "{SubCategoryId:int}"
+﻿@page "{subCategoryId:int}"
 @model CYBERQUIZ.UI.Pages.QuizPages.QuestionPages.QuizQuestionModel
 @{
+    ViewData["Title"] = "Quiz Question";
+}
+
+@foreach(var question in Model.Questions)
+{
+    <div>
+        <h3>@question.Text</h3>
+    </div>
 }

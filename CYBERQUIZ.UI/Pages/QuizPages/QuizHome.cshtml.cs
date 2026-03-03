@@ -22,7 +22,7 @@ namespace CYBERQUIZ.UI.Pages.QuizPages
         {
             var client = _httpClientFactory.CreateClient("API");
 
-            //
+            //"Ta den inloggade användarens Identity-cookie från UI-appen och skicka vidare den till API:t."
             if (Request.Headers.TryGetValue("Cookie", out var cookie))
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
