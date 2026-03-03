@@ -1,5 +1,6 @@
 ﻿using CYBERQUIZ.BLL.DTOS;
 using CYBERQUIZ.DAL.DATA;
+using CYBERQUIZ.DAL.MODELS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,6 +30,9 @@ namespace CYBERQUIZ.BLL.SERVICES
                 .Where(r => r.UserId == userId)
                 .ToListAsync();
 
+            // Hämta totalt antal frågor i systemet
+            var totalQuestionsInDb = await _db.Questions.CountAsync();
+
             // Gruppera per subkategori och plocka ut bästa sessionen
             var subCategoryProgress = results
                 .GroupBy(r => r.Question.SubCategory.Name)
@@ -48,10 +52,17 @@ namespace CYBERQUIZ.BLL.SERVICES
                     };
                 }).ToList();
 
+            // Räkna unika frågor användaren svarat rätt på (oavsett session)
+            var uniqueCorrect = results
+                .Where(r => r.IsCorrect)
+                .Select(r => r.QuestionId)
+                .Distinct()
+                .Count();
+
             return new UserProgressDto
             {
-                TotalQuestions = results.Count,
-                AnsweredCorrectly = results.Count(r => r.IsCorrect),
+                TotalQuestions = totalQuestionsInDb, // Totalt antal frågor i systemet
+                AnsweredCorrectly = uniqueCorrect,   // Unika frågor användaren klarat
                 SubCategoryProgress = subCategoryProgress
             };
         }
@@ -65,6 +76,29 @@ namespace CYBERQUIZ.BLL.SERVICES
             // Sätt nytt e-postadress direkt utan token-verifiering
             var result = await _userManager.SetEmailAsync(user, newEmail);
             return result.Succeeded;
+        }
+
+        //Returnerar alla felaktiga svar gjorda av användaren, ska skickas till AI för att hjälpa användaren veta vad de behöver studera
+        public async Task<List<UserResult>> GetIncorrectAnswersAsync(string userId)
+        {
+            // Hämta alla resultat för användaren
+            var allResults = await _db.UserResults
+                .Include(r => r.Question)
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
+
+            // Samla alla frågor där användaren svarat rätt minst en gång
+            var everCorrectQuestionIds = allResults
+                .Where(r => r.IsCorrect)
+                .Select(r => r.QuestionId)
+                .ToHashSet();
+
+            // Returnera endast unika frågor där användaren ALDRIG svarat rätt
+            return allResults
+                .Where(r => !r.IsCorrect && !everCorrectQuestionIds.Contains(r.QuestionId))
+                .GroupBy(r => r.QuestionId)
+                .Select(g => g.First()) // En rad per fråga räcker till AI-prompten
+                .ToList();
         }
     }
 }

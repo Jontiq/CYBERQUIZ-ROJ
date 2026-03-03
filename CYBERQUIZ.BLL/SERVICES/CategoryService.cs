@@ -41,8 +41,8 @@ namespace CYBERQUIZ.BLL.SERVICES
                         Id = sub.Id,
                         Name = sub.Name,
                         QuestionCount = sub.Questions.Count,
-                        //Kontrollerar om subkategorin är upplåst för användaren, Anropar metoden nedan
-                        IsUnlocked = await IsSubCategoryUnlockedAsync(userId, sub.Id)
+                        IsUnlocked = await IsSubCategoryUnlockedAsync(userId, sub.Id),
+                        ProgressPercent = await GetBestScoreAsync(userId, sub.Id) // -1 = ej påbörjad
                     });
                 }
                 //Lägger till färdig CategoryDto i result-listan
@@ -106,6 +106,33 @@ namespace CYBERQUIZ.BLL.SERVICES
             double score = (double)bestSession.Count(r => r.IsCorrect) / questionIds.Count;
             // Returnera true om poängen uppnår eller överstiger UnlockThreshold, annars false
             return score >= UnlockThreshold;
+        }
+
+        public async Task<double> GetBestScoreAsync(string userId, int subCategoryId)
+        {
+            // Hämta alla fråge-ID:n som tillhör subkategorin
+            var questionIds = await _db.Questions
+                .Where(q => q.SubCategoryId == subCategoryId)
+                .Select(q => q.Id)
+                .ToListAsync();
+
+            if (!questionIds.Any()) return 0;
+
+            // Hämta alla svar från användaren för denna subkategori
+            var results = await _db.UserResults
+                .Where(r => r.UserId == userId && questionIds.Contains(r.QuestionId))
+                .ToListAsync();
+
+            if (!results.Any()) return -1; // -1 betyder ej påbörjad
+
+            // Plocka ut den session med flest rätta svar
+            var bestSession = results
+                .GroupBy(r => r.SessionId)
+                .OrderByDescending(session => session.Count(r => r.IsCorrect))
+                .First();
+
+            // Returnera procentandelen rätta svar i bästa sessionen
+            return (double)bestSession.Count(r => r.IsCorrect) / questionIds.Count * 100;
         }
     }
 }

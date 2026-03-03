@@ -1,4 +1,5 @@
 ﻿using CYBERQUIZ.BLL.DTOS;
+using CYBERQUIZ.DAL.MODELS;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace CYBERQUIZ.BLL.SERVICES
         //// 2. Ändra e-post (Hanteras via Identity, men anropas härifrån)
         Task<bool> ChangeEmailAsync(string userId, string newEmail);
 
-        //// 4. (För VG) Om vi väljer AI-Coach, kan den anropas härifrån
-        //// Task<string> GetAiCoachRecommendationAsync(string userId);
+        // 3. Hämtar alla svar från usern där de endast svarat fel.
+        Task<List<UserResult>> GetIncorrectAnswersAsync(string userId);
 
     }
 }

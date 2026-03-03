@@ -19,6 +19,6 @@ namespace CYBERQUIZ.BLL.SERVICES
         //// Specifik metod för att kontrollera om en subkategori får startas
         Task<bool> IsSubCategoryUnlockedAsync(string userId, int subCategoryId);
 
-
+        Task<double> GetBestScoreAsync(string userId, int subCategoryId);
     }
 }

@@ -7,18 +7,27 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
     public class QuizQuestionModel : PageModel
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+
         public List<QuestionDto> Questions { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public int SubCategoryId { get; set; }
 
-        public QuizQuestionModel(IHttpClientFactory httpClientFactory)
+        // API-bas-URL:en som JavaScript kan använda för fetch-anropet
+        public string ApiBaseUrl { get; set; } = string.Empty;
+
+        public QuizQuestionModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Hämta API-bas-URL:en från appsettings.json
+            ApiBaseUrl = _configuration["ApiBaseUrl"] ?? string.Empty;
+
             var client = _httpClientFactory.CreateClient("API");
 
             // Vidarebefordra Identity-cookien så att API:et vet vem som är inloggad
@@ -42,7 +51,15 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
             // Deserialisera svaret till en lista av frågor
             var questions = await response.Content.ReadFromJsonAsync<List<QuestionDto>>();
             if (questions != null)
+            {
+                // Randomisera ordningen på svarsalternativen för varje fråga
+                var rng = new Random();
+                foreach (var question in questions)
+                    question.AnswerOptions = question.AnswerOptions.OrderBy(_ => rng.Next()).ToList();
+
                 Questions = questions;
+            }
+            
 
             return Page();
         }
