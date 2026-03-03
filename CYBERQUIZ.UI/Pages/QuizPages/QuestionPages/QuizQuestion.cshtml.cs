@@ -7,7 +7,6 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
     public class QuizQuestionModel : PageModel
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
         public List<QuestionDto> Questions { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
@@ -17,23 +16,35 @@ namespace CYBERQUIZ.UI.Pages.QuizPages.QuestionPages
         {
             _httpClientFactory = httpClientFactory;
         }
-        public async Task OnGetAsync(int subCatagoryId)
-        {
-             subCatagoryId=SubCategoryId;
 
-            var client= _httpClientFactory.CreateClient("API");
-           // "Ta den inloggade användarens Identity-cookie från UI-appen och skicka vidare den till API:t."
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var client = _httpClientFactory.CreateClient("API");
+
+            // Vidarebefordra Identity-cookien så att API:et vet vem som är inloggad
             if (Request.Headers.TryGetValue("Cookie", out var cookie))
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
                 client.DefaultRequestHeaders.Add("Cookie", (string)cookie);
             }
 
-            var questions = await client.GetFromJsonAsync<List<QuestionDto>>($"Api/Quiz/subcategory/{subCatagoryId}/questions");
+            // Anropa API:et och fånga statuskoden istället för att kasta exception
+            var response = await client.GetAsync($"Api/Quiz/subcategory/{SubCategoryId}/questions");
+
+            // Om API:et returnerar 403, skicka användaren till AccessDenied-sidan
+            if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                return RedirectToPage("/AccessDenied");
+
+            // Om något annat gick fel, returnera statuskoden direkt
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int)response.StatusCode);
+
+            // Deserialisera svaret till en lista av frågor
+            var questions = await response.Content.ReadFromJsonAsync<List<QuestionDto>>();
             if (questions != null)
-            {
-               Questions = questions;
-            }
+                Questions = questions;
+
+            return Page();
         }
     }
 }
