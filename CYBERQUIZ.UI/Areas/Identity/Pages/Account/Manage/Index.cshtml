@@ -31,14 +31,50 @@
                     </div>
                 </div>
             </div>
-            <div style="height:200px; overflow-y:auto; border:1px solid black;">
-                @Model.AiCoach.QuestionText,
-                @Model.AiCoach.AiRecommendation
+
+            @* AI Feedback-sektion *@
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">AI-feedback</h5>
+
+                    <form method="post" asp-page-handler="LoadFeedback">
+                        <button type="submit" class="btn btn-primary mb-3">Ladda feedback</button>
+                    </form>
+
+                    @if (Model.AiCoach != null)
+                    {
+                        @* Visa felaktiga frågor numrerade *@
+                        @if (!string.IsNullOrEmpty(Model.AiCoach.QuestionText))
+                        {
+                            <h6 class="mt-2">Frågor du behöver öva på:</h6>
+                            <ol>
+                                @foreach (var question in Model.AiCoach.QuestionText.Split("\n\n", StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    var parts = question.Split('\n');
+                                    <li class="mb-2">
+                                        @parts[0]
+                                        @if (parts.Length > 1)
+                                        {
+                                            <br />
+                                            <small class="text-muted">@parts[1]</small>
+                                        }
+                                    </li>
+                                }
+                            </ol>
+                        }
+
+                        @* AI:ns samlade rekommendation *@
+                        <div class="mt-3 p-3 bg-light rounded border-start border-primary border-3">
+                            <h6>💡 Studieråd från AI-coachen:</h6>
+                            <p class="mb-0">@Model.AiCoach.AiRecommendation</p>
+                        </div>
+                    }
+                </div>
             </div>
             
 
             @* En card per subkategori med individuell progressionsbar *@
-            <h5>Progression per subkategori</h5>
+            <h5>Progression per påbörjad subkategori</h5>
             @foreach (var sub in Model.Progress.SubCategoryProgress)
             {
                 <div class="card mb-2">
