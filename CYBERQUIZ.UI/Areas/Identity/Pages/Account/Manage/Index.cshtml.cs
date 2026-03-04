@@ -27,7 +27,7 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
-        public IncorrectAnswerDto AiCoach { get; set; }
+        public AiDto AiCoach { get; set; }
         // Progressionsdata hämtad från API:et
         public UserProgressDto Progress { get; set; }
 
@@ -53,7 +53,7 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
             // Hämta progressionsdata från API:et
             Progress = await client.GetFromJsonAsync<UserProgressDto>("api/profile/progress");
 
-AiCoach = await client.GetFromJsonAsync<IncorrectAnswerDto>(requestUri: "api/Ai/recommend");
+AiCoach = await client.GetFromJsonAsync<AiDto>(requestUri: "api/Ai/recommend");
           
 
             return Page();
