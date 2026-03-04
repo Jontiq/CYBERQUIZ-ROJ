@@ -27,6 +27,7 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
+        public IncorrectAnswerDto AiCoach { get; set; }
         // Progressionsdata hämtad från API:et
         public UserProgressDto Progress { get; set; }
 
@@ -41,7 +42,7 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
 
             // Skapa HTTP-klient mot API:et
             var client = _httpClientFactory.CreateClient("API");
-
+  
             // Vidarebefordra Identity-cookien så att API:et vet vem som är inloggad
             if (Request.Headers.TryGetValue("Cookie", out var cookie))
             {
@@ -51,6 +52,9 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
 
             // Hämta progressionsdata från API:et
             Progress = await client.GetFromJsonAsync<UserProgressDto>("api/profile/progress");
+
+AiCoach = await client.GetFromJsonAsync<IncorrectAnswerDto>(requestUri: "api/Ai/recommend");
+          
 
             return Page();
         }
