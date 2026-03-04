@@ -54,21 +54,32 @@ namespace CYBERQUIZ.API.Controllers
 
             // Bygg prompt och skicka till AI
             var prompt = $"""
-                Du är en pedagogisk men tydlig lärare inom cybersäkerhet.
-                En student svarade fel på följande frågor:
-                {answersText}
-                Skriv direkt till studenten (använd "du").
-                Börja INTE med en hälsningsfras (ingen "Hej", ingen inledning).
-                Sammanfatta INTE fråga för fråga – identifiera istället gemensamma kunskapsluckor och begrepp som blandas ihop.
-                Förklara kort:
-                - vilka kunskapsluckor som finns
-                - vilka begrepp som blandas ihop
-                - exakt vad studenten bör repetera
-                Avsluta med 3 konkreta träningspunkter i punktform.
-                Håll svaret under 120 ord.
-                Skriv på svenska.
-                Ton: professionell, tydlig och motiverande – inte överdrivet berömmande.
-                """;
+    Du är en pedagogisk men tydlig lärare inom cybersäkerhet.
+    En student svarade fel på följande frågor:
+    {answersText}
+
+    Skriv direkt till studenten (använd "du").
+    Börja INTE med en hälsningsfras (ingen "Hej", ingen inledning).
+    Sammanfatta INTE fråga för fråga – identifiera istället gemensamma kunskapsluckor och begrepp som blandas ihop.
+    
+    Formatera svaret exakt så här med tomma rader mellan varje sektion:
+    
+    [Vilka kunskapsluckor som finns - en kort mening]
+    
+    [Vilka begrepp som blandas ihop - en kort mening]
+    
+    [Exakt vad studenten bör repetera - en kort mening]
+    
+    Träningspunkter:
+    * [punkt 1]
+    * [punkt 2]
+    * [punkt 3]
+    
+    Kom ihåg att användaren har besvarat flervalsfrågor så de har ingen egen input.
+    Håll svaret under 120 ord.
+    Skriv på svenska.
+    Ton: professionell, tydlig och motiverande – inte överdrivet berömmande.
+    """;
             _logger.LogInformation("AI Prompt:\n{Prompt}", prompt);
 
             var response = await _aiService.AskAsync(prompt);
