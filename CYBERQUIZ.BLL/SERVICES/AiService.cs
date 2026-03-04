@@ -6,7 +6,7 @@ using System.Text;
 namespace CYBERQUIZ.BLL.SERVICES
 {
     //I princip direktkopierad från movie api projektet vi gjorde
-    public class AiService
+    public class AiService : IAiService
     {
 
         private readonly HttpClient _httpClient;
