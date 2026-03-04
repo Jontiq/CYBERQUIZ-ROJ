@@ -45,7 +45,7 @@ namespace CYBERQUIZ.API.Controllers
                 return Ok("Du har inga felaktiga svar ännu – gör ett quiz först!");
 
             // Bygg en läsbar text av felen, typ som movies-exemplet
-            var answersText = string.Join("\n", incorrectAnswers.Select(r =>
+            var answersText = string.Join("\n - ", incorrectAnswers.Select(r =>
             {
                 var correctAnswer = r.Question.AnswerOptions
                     .FirstOrDefault(a => a.IsCorrect)?.Text ?? "okänt";
@@ -53,7 +53,23 @@ namespace CYBERQUIZ.API.Controllers
             }));
 
             // Bygg prompt och skicka till Ai
-            var prompt = $"Här är frågor som en student svarade fel på i ett cybersäkerhetsquiz:\n{answersText}\n\nAnalysera svaren och ge konkreta råd på svenska om vad studenten behöver träna mer på. Håll svaret kort och uppmuntrande.";
+            var prompt = $"""
+                            Du är en pedagogisk men tydlig lärare inom cybersäkerhet.
+                            En student svarade fel på följande frågor:
+                            {answersText}
+
+                            Skriv direkt till studenten (använd "du").
+                            Börja INTE med en hälsningsfras (ingen "Hej", ingen inledning).
+                            Sammanfatta INTE fråga för fråga – identifiera istället gemensamma kunskapsluckor och begrepp som blandas ihop.
+                            Förklara kort:
+                            - vilka kunskapsluckor som finns
+                            - vilka begrepp som blandas ihop
+                            - exakt vad studenten bör repetera
+                            Avsluta med 3 konkreta träningspunkter i punktform.
+                            Håll svaret under 120 ord.
+                            Skriv på svenska.
+                            Ton: professionell, tydlig och motiverande – inte överdrivet berömmande.
+                            """;
 
             _logger.LogInformation("AI Prompt:\n{Prompt}", prompt);
 

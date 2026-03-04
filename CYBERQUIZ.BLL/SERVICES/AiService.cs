@@ -21,7 +21,7 @@ namespace CYBERQUIZ.BLL.SERVICES
         {
             var request = new
             {
-                model = "phi3", //Här byter man modell, men måste göra en pull först (ex. powershell)
+                model = "llama3.1", //Här byter man modell, men måste göra en pull först (ex. powershell)
                 prompt = prompt,
                 stream = false
             };
