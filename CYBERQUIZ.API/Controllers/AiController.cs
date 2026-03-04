@@ -1,4 +1,5 @@
-﻿using CYBERQUIZ.BLL.SERVICES;
+﻿using CYBERQUIZ.BLL.DTOS;
+using CYBERQUIZ.BLL.SERVICES;
 using CYBERQUIZ.DAL.DATA;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,55 +27,63 @@ namespace CYBERQUIZ.API.Controllers
         }
 
         // GET /api/ai/recommend
-        // Hämtar felaktiga svar från databasen och skickar till Ai
+        // Hämtar felaktiga svar och skickar till AI för studieråd
         [HttpGet("recommend")]
         public async Task<IActionResult> Recommend()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            // Hämta användarens felaktiga svar från db
-            //var incorrectAnswers = await _db.UserResults
-            //    .Where(r => r.UserId == userId && r.IsCorrect == false)
-            //    .Include(r => r.Question)
-            //        .ThenInclude(q => q.AnswerOptions)
-            //    .ToListAsync();
-
+            // Hämta frågor användaren aldrig svarat rätt på
             var incorrectAnswers = await _profileService.GetIncorrectAnswersAsync(userId);
 
+            // Om listan är tom – antingen inget quiz gjort eller allt rätt – returnera direkt utan AI-anrop
             if (!incorrectAnswers.Any())
-                return Ok("Du har inga felaktiga svar ännu – gör ett quiz först!");
+            {
+                var hasAnyResults = await _db.UserResults.AnyAsync(r => r.UserId == userId);
+                return Ok(new AiDto
+                {
+                    QuestionText = string.Empty,
+                    AiRecommendation = hasAnyResults
+                        ? "Fantastiskt – du har svarat rätt på allt! Fortsätt så!"
+                        : "Du har inte gjort något quiz än – testa ett quiz först!"
+                });
+            }
 
-            // Bygg en läsbar text av felen, typ som movies-exemplet
-            var answersText = string.Join("\n - ", incorrectAnswers.Select(r =>
+            // Bygg en läsbar text med fråga och rätt svar per rad
+            var answersText = string.Join("\n", incorrectAnswers.Select(r =>
             {
                 var correctAnswer = r.Question.AnswerOptions
                     .FirstOrDefault(a => a.IsCorrect)?.Text ?? "okänt";
                 return $"{r.Question.Text} | Rätt svar: {correctAnswer}";
             }));
 
-            // Bygg prompt och skicka till Ai
+            // Bygg prompt och skicka till AI
             var prompt = $"""
-                            Du är en pedagogisk men tydlig lärare inom cybersäkerhet.
-                            En student svarade fel på följande frågor:
-                            {answersText}
-
-                            Skriv direkt till studenten (använd "du").
-                            Börja INTE med en hälsningsfras (ingen "Hej", ingen inledning).
-                            Sammanfatta INTE fråga för fråga – identifiera istället gemensamma kunskapsluckor och begrepp som blandas ihop.
-                            Förklara kort:
-                            - vilka kunskapsluckor som finns
-                            - vilka begrepp som blandas ihop
-                            - exakt vad studenten bör repetera
-                            Avsluta med 3 konkreta träningspunkter i punktform.
-                            Håll svaret under 120 ord.
-                            Skriv på svenska.
-                            Ton: professionell, tydlig och motiverande – inte överdrivet berömmande.
-                            """;
-
+                Du är en pedagogisk men tydlig lärare inom cybersäkerhet.
+                En student svarade fel på följande frågor:
+                {answersText}
+                Skriv direkt till studenten (använd "du").
+                Börja INTE med en hälsningsfras (ingen "Hej", ingen inledning).
+                Sammanfatta INTE fråga för fråga – identifiera istället gemensamma kunskapsluckor och begrepp som blandas ihop.
+                Förklara kort:
+                - vilka kunskapsluckor som finns
+                - vilka begrepp som blandas ihop
+                - exakt vad studenten bör repetera
+                Avsluta med 3 konkreta träningspunkter i punktform.
+                Håll svaret under 120 ord.
+                Skriv på svenska.
+                Ton: professionell, tydlig och motiverande – inte överdrivet berömmande.
+                """;
             _logger.LogInformation("AI Prompt:\n{Prompt}", prompt);
 
             var response = await _aiService.AskAsync(prompt);
-            return Ok(response);
+
+            // Returnera frågor + AI-rekommendation samlat i en DTO
+            return Ok(new AiDto
+            {
+                QuestionText = answersText,
+                AiRecommendation = response
+            });
         }
     }
 }
