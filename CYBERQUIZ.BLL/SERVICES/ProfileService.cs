@@ -81,23 +81,21 @@ namespace CYBERQUIZ.BLL.SERVICES
         //Returnerar alla felaktiga svar gjorda av användaren, ska skickas till AI för att hjälpa användaren veta vad de behöver studera
         public async Task<List<UserResult>> GetIncorrectAnswersAsync(string userId)
         {
-            // Hämta alla resultat för användaren
             var allResults = await _db.UserResults
                 .Include(r => r.Question)
+                    .ThenInclude(q => q.AnswerOptions)
                 .Where(r => r.UserId == userId)
                 .ToListAsync();
 
-            // Samla alla frågor där användaren svarat rätt minst en gång
             var everCorrectQuestionIds = allResults
                 .Where(r => r.IsCorrect)
                 .Select(r => r.QuestionId)
                 .ToHashSet();
 
-            // Returnera endast unika frågor där användaren ALDRIG svarat rätt
             return allResults
                 .Where(r => !r.IsCorrect && !everCorrectQuestionIds.Contains(r.QuestionId))
                 .GroupBy(r => r.QuestionId)
-                .Select(g => g.First()) // En rad per fråga räcker till AI-prompten
+                .Select(g => g.First())
                 .ToList();
         }
     }

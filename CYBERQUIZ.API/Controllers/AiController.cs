@@ -13,12 +13,16 @@ namespace CYBERQUIZ.API.Controllers
     public class AiController : ControllerBase
     {
         private readonly IAiService _aiService;
+        private readonly IProfileService _profileService;
         private readonly AppDbContext _db;
+        private readonly ILogger<AiController> _logger;
 
-        public AiController(IAiService aiService, AppDbContext db)
+        public AiController(IAiService aiService, IProfileService profileService, AppDbContext db, ILogger<AiController> logger)
         {
             _aiService = aiService;
+            _profileService = profileService;
             _db = db;
+            _logger = logger;
         }
 
         // GET /api/ai/recommend
@@ -29,11 +33,13 @@ namespace CYBERQUIZ.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             // Hämta användarens felaktiga svar från db
-            var incorrectAnswers = await _db.UserResults
-                .Where(r => r.UserId == userId && r.IsCorrect == false)
-                .Include(r => r.Question)
-                    .ThenInclude(q => q.AnswerOptions)
-                .ToListAsync();
+            //var incorrectAnswers = await _db.UserResults
+            //    .Where(r => r.UserId == userId && r.IsCorrect == false)
+            //    .Include(r => r.Question)
+            //        .ThenInclude(q => q.AnswerOptions)
+            //    .ToListAsync();
+
+            var incorrectAnswers = await _profileService.GetIncorrectAnswersAsync(userId);
 
             if (!incorrectAnswers.Any())
                 return Ok("Du har inga felaktiga svar ännu – gör ett quiz först!");
@@ -48,6 +54,8 @@ namespace CYBERQUIZ.API.Controllers
 
             // Bygg prompt och skicka till Ai
             var prompt = $"Här är frågor som en student svarade fel på i ett cybersäkerhetsquiz:\n{answersText}\n\nAnalysera svaren och ge konkreta råd på svenska om vad studenten behöver träna mer på. Håll svaret kort och uppmuntrande.";
+
+            _logger.LogInformation("AI Prompt:\n{Prompt}", prompt);
 
             var response = await _aiService.AskAsync(prompt);
             return Ok(response);
