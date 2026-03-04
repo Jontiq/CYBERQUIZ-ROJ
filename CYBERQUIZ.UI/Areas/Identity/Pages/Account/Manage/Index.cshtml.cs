@@ -33,28 +33,40 @@ namespace CYBERQUIZ.UI.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Hämta inloggad användare via Identity
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
-            // Hämta och sätt användarnamnet
             Username = await _userManager.GetUserNameAsync(user);
 
-            // Skapa HTTP-klient mot API:et
             var client = _httpClientFactory.CreateClient("API");
-  
-            // Vidarebefordra Identity-cookien så att API:et vet vem som är inloggad
             if (Request.Headers.TryGetValue("Cookie", out var cookie))
             {
                 client.DefaultRequestHeaders.Remove("Cookie");
                 client.DefaultRequestHeaders.Add("Cookie", (string)cookie);
             }
 
-            // Hämta progressionsdata från API:et
             Progress = await client.GetFromJsonAsync<UserProgressDto>("api/profile/progress");
+            // AI-anropet är borttaget härifrån
 
-AiCoach = await client.GetFromJsonAsync<AiDto>(requestUri: "api/Ai/recommend");
-          
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostLoadFeedbackAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return NotFound();
+
+            Username = await _userManager.GetUserNameAsync(user);
+
+            var client = _httpClientFactory.CreateClient("API");
+            if (Request.Headers.TryGetValue("Cookie", out var cookie))
+            {
+                client.DefaultRequestHeaders.Remove("Cookie");
+                client.DefaultRequestHeaders.Add("Cookie", (string)cookie);
+            }
+
+            Progress = await client.GetFromJsonAsync<UserProgressDto>("api/profile/progress");
+            AiCoach = await client.GetFromJsonAsync<AiDto>("api/Ai/recommend");
 
             return Page();
         }
