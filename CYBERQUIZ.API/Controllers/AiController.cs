@@ -50,12 +50,7 @@ namespace CYBERQUIZ.API.Controllers
             }
 
             // Bygg en läsbar text med fråga och rätt svar per rad
-            var answersText = string.Join("\n", incorrectAnswers.Select(r =>
-            {
-                var correctAnswer = r.Question.AnswerOptions
-                    .FirstOrDefault(a => a.IsCorrect)?.Text ?? "okänt";
-                return $"{r.Question.Text} | Rätt svar: {correctAnswer}";
-            }));
+            var answersText = string.Join("\n\n", incorrectAnswers.Select(r => { var correctAnswer = r.Question.AnswerOptions.FirstOrDefault(a => a.IsCorrect)?.Text ?? "okänt"; return $"{r.Question.Text}\nRätt svar: {correctAnswer}"; }));
 
             // Bygg prompt och skicka till AI
             var prompt = $"""
