@@ -93,14 +93,11 @@ namespace CYBERQUIZ.BLL.SERVICES
             // Om användaren inte har svarat alls, returnera false
             if (!results.Any()) return false;
 
-            // Plocka ut den session med flest rätta svar
+            // Plocka ut den session med flest rätta svar (andelmässigt)
             var bestSession = results
                 .GroupBy(r => r.SessionId)
-                .OrderByDescending(session => session.Count(r => r.IsCorrect))
+                .OrderByDescending(session => (double)session.Count(r => r.IsCorrect) / questionIds.Count)
                 .First();
-
-            // Om bästa sessionen inte täcker alla frågor, returnera false
-            if (bestSession.Count() < questionIds.Count) return false;
 
             // Beräkna andelen korrekta svar i bästa sessionen
             double score = (double)bestSession.Count(r => r.IsCorrect) / questionIds.Count;
